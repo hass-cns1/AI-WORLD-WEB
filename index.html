@@ -36,11 +36,11 @@
     .scrollbar-hide::-webkit-scrollbar { display: none; }
     .code-sidebar { background: rgb(20, 20, 35); border: 1px solid rgb(50, 50, 80); border-radius: 12px; padding: 10px; display: flex; flex-direction: column; height: 500px; max-height: 500px; }
     .code-sidebar h3 { color: rgb(255, 255, 255); font-weight: 600; margin-bottom: 6px; font-size: 12px; }
-    .code-display { flex: 1; background: rgb(14, 14, 16); border: 1px solid rgb(50, 50, 80); border-radius: 6px; padding: 8px; overflow-y: auto; margin-bottom: 6px; font-family: 'Courier New', monospace; font-size: 11px; color: rgb(167, 243, 208); white-space: pre-wrap; word-break: break-word; line-height: 1.4; }
+    .code-display { flex: 1; background: rgb(14, 14, 16); border: 1px solid rgb(50, 50, 80); border-radius: 6px; padding: 8px; overflow-y: auto; margin-bottom: 6px; font-family: 'Courier New', monospace; font-size: 11px; color: rgb(167, 243, 208); }
     .output-image { max-width: 100%; height: auto; border-radius: 4px; }
     .audio-player { width: 100%; max-height: 32px; }
     .code-buttons { display: flex; gap: 4px; flex-direction: row; }
-    .btn-code { flex: 1; background: rgb(88, 101, 242); color: white; border: none; padding: 5px 6px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 3px; }
+    .btn-code { flex: 1; background: rgb(88, 101, 242); color: white; border: none; padding: 5px 6px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600; transition: all 0.2s; }
     .btn-code:hover { background: rgb(99, 111, 252); }
     .btn-code:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-code svg { width: 10px; height: 10px; }
@@ -49,18 +49,18 @@
     .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; align-items: center; justify-content: center; }
     .modal.show { display: flex; }
     .modal-content { background: rgb(20, 20, 35); border: 1px solid rgb(50, 50, 80); border-radius: 12px; padding: 20px; max-width: 90%; max-height: 85vh; overflow: auto; position: relative; }
-    .modal-close { position: absolute; top: 12px; right: 12px; background: rgb(88, 101, 242); color: white; border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+    .modal-close { position: absolute; top: 12px; right: 12px; background: rgb(88, 101, 242); color: white; border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 16px; }
     .modal-close:hover { background: rgb(99, 111, 252); }
-    .modal-code { font-family: 'Courier New', monospace; font-size: 14px; color: rgb(167, 243, 208); white-space: pre-wrap; word-break: break-all; background: rgb(14, 14, 16); padding: 16px; border-radius: 8px; border: 1px solid rgb(50, 50, 80); }
+    .modal-code { font-family: 'Courier New', monospace; font-size: 14px; color: rgb(167, 243, 208); white-space: pre-wrap; word-break: break-all; background: rgb(14, 14, 16); padding: 16px; border-radius: 6px; }
   </style>
 </head>
 <body class="p-6">
   <div class="max-w-6xl w-full mx-auto">
     <div class="text-center">
       <div class="flex flex-col items-center gap-4 mb-6">
-        <img class="w-28 h-28 rounded-full glow" loading="lazy" src="https://cdn.discordapp.com/avatars/1506892951450685541/a_8a6ca7c147a205c3abc492209f962ffb.gif?size=1024&animated=true" alt="AI World bot avatar">
+        <img class="w-28 h-28 rounded-full glow" loading="lazy" src="https://cdn.discordapp.com/avatars/1506892951450685541/a_8a6ca7c147a205c3abc492209f962ffb.gif?size=1024&animated=true" alt="AI World Logo">
         <h1 class="font-bold" style="color: rgb(255, 255, 255); font-weight: 700; font-size: 40px;">AI World</h1>
-        <p class="max-w-md" style="color: rgb(156, 163, 175); font-weight: 400; font-size: 16px;">This is an AI-powered server built for creators and coders. You can generate code, make images, test ideas, or just chill and chat. It's a place for people who like experimenting with tech and pushing boundaries.</p>
+        <p class="max-w-md" style="color: rgb(156, 163, 175); font-weight: 400; font-size: 16px;">This is an AI-powered server built for creators and coders. You can generate code, make images, text-to-speech, or chat!</p>
       </div>
 
       <div class="flex gap-4 justify-center mb-8 flex-wrap">
@@ -134,7 +134,7 @@
                 View
               </button>
               <button id="copy-code-btn" class="btn-code" style="display: none;">
-                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 1 1 0 100 2h.5a.5.5 0 01.5.5v11a.5.5 0 01-.5.5H6.5a.5.5 0 01-.5-.5V5a.5.5 0 01.5-.5H7a1 1 0 100-2z"/></svg>
+                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 1 1 0 110-2h.5A2.5 2.5 0 0116 5v11a4 4 0 01-4 4H6a4 4 0 01-4-4V5a2.5 2.5 0 012.5-2.5H8a1 1 0 110 2H6z"/></svg>
                 Copy
               </button>
               <button id="download-code-btn" class="btn-code" style="display: none;">
@@ -147,25 +147,25 @@
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8 mt-8">
-        <div class="rounded-xl p-5 text-left" style="background: rgb(26, 26, 46);"><div class="mb-2"><i data-lucide="message-square" class="w-5 h-5 text-indigo-400"></i></div><h3 class="font-medium mb-1" style="color: rgb(226, 232, 240); font-weight: 500; font-size: 19px;">Web Chat</h3><p class="text-sm" style="color: rgb(107, 114, 128); font-weight: 400; font-size: 16px;">Chat instantly.</p></div>
-        <div class="rounded-xl p-5 text-left" style="background: rgb(26, 26, 46);"><div class="mb-2"><i data-lucide="code" class="w-5 h-5 text-indigo-400"></i></div><h3 class="font-medium mb-1" style="color: rgb(226, 232, 240); font-weight: 500; font-size: 19px;">Code Gen</h3><p class="text-sm" style="color: rgb(107, 114, 128); font-weight: 400; font-size: 16px;">Generate code.</p></div>
-        <div class="rounded-xl p-5 text-left" style="background: rgb(26, 26, 46);"><div class="mb-2"><i data-lucide="image" class="w-5 h-5 text-indigo-400"></i></div><h3 class="font-medium mb-1" style="color: rgb(226, 232, 240); font-weight: 500; font-size: 19px;">Images</h3><p class="text-sm" style="color: rgb(107, 114, 128); font-weight: 400; font-size: 16px;">Create visuals.</p></div>
-        <div class="rounded-xl p-5 text-left" style="background: rgb(26, 26, 46);"><div class="mb-2"><i data-lucide="volume-2" class="w-5 h-5 text-indigo-400"></i></div><h3 class="font-medium mb-1" style="color: rgb(226, 232, 240); font-weight: 500; font-size: 19px;">Voice</h3><p class="text-sm" style="color: rgb(107, 114, 128); font-weight: 400; font-size: 16px;">Text to speech.</p></div>
-        <div class="rounded-xl p-5 text-left" style="background: rgb(26, 26, 46);"><div class="mb-2"><i data-lucide="zap" class="w-5 h-5 text-indigo-400"></i></div><h3 class="font-medium mb-1" style="color: rgb(226, 232, 240); font-weight: 500; font-size: 19px;">Discord</h3><p class="text-sm" style="color: rgb(107, 114, 128); font-weight: 400; font-size: 16px;">And more.</p></div>
+        <div class="rounded-xl p-5 text-left" style="background: rgb(26, 26, 46);"><div class="mb-2"><i data-lucide="message-square" class="w-5 h-5 text-indigo-400"></i></div><h3 class="font-medium mb-1" style="color: rgb(226, 232, 240);">Text & Chat</h3><p class="text-xs" style="color: rgb(156, 163, 175);">Ask questions and chat with AI</p></div>
+        <div class="rounded-xl p-5 text-left" style="background: rgb(26, 26, 46);"><div class="mb-2"><i data-lucide="code" class="w-5 h-5 text-indigo-400"></i></div><h3 class="font-medium mb-1" style="color: rgb(226, 232, 240);">Code Generation</h3><p class="text-xs" style="color: rgb(156, 163, 175);">Generate & debug code snippets</p></div>
+        <div class="rounded-xl p-5 text-left" style="background: rgb(26, 26, 46);"><div class="mb-2"><i data-lucide="image" class="w-5 h-5 text-indigo-400"></i></div><h3 class="font-medium mb-1" style="color: rgb(226, 232, 240);">Image Generation</h3><p class="text-xs" style="color: rgb(156, 163, 175);">Create unique visual content</p></div>
+        <div class="rounded-xl p-5 text-left" style="background: rgb(26, 26, 46);"><div class="mb-2"><i data-lucide="volume-2" class="w-5 h-5 text-indigo-400"></i></div><h3 class="font-medium mb-1" style="color: rgb(226, 232, 240);">Text-to-Speech</h3><p class="text-xs" style="color: rgb(156, 163, 175);">Convert text to audio</p></div>
+        <div class="rounded-xl p-5 text-left" style="background: rgb(26, 26, 46);"><div class="mb-2"><i data-lucide="zap" class="w-5 h-5 text-indigo-400"></i></div><h3 class="font-medium mb-1" style="color: rgb(226, 232, 240);">Fast & Reliable</h3><p class="text-xs" style="color: rgb(156, 163, 175);">Powered by advanced AI models</p></div>
       </div>
 
       <hr class="border-gray-700 my-4" style="background: transparent;">
 
       <h2 class="font-bold text-2xl mb-4" style="color: rgb(255, 255, 255); font-size: 28px;">Creators</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-        <div class="rounded-xl p-5" style="background: rgb(26, 26, 46);"><div class="flex items-center gap-3 mb-3"><img class="w-12 h-12 rounded-full" src="https://cdn.discordapp.com/avatars/947423539626127373/4a2074d33791f77d71e98faea5f532f3.webp?size=1024" alt="Creator"><div class="flex-1 text-left"><h3 class="font-medium" style="color: rgb(255, 255, 255); font-weight: 600; font-size: 19px;">unknwnsvc</h3><p class="text-xs" style="color: rgb(156, 163, 175); font-size: 16px;">Owner</p></div></div><p class="text-sm text-left mb-3" style="color: rgb(107, 114, 128); font-size: 16px;">Building AI World for creators and coders.</p><div class="flex gap-2 justify-start"><a href="https://discord.com/users/1399079638311112869" target="_blank"><button class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 rounded text-xs font-medium text-white">Discord</button></a></div></div>
-        <div class="rounded-xl p-5" style="background: rgb(26, 26, 46);"><div class="flex items-center gap-3 mb-3"><img class="w-12 h-12 rounded-full" src="https://cdn.discordapp.com/avatars/1486284162611548220/ec51e31d9b7654d256a1d4af82f1a081.webp?size=1024" alt="Co-owner"><div class="flex-1 text-left"><h3 class="font-medium" style="color: rgb(255, 255, 255); font-weight: 600; font-size: 19px;">Co-Owner</h3><p class="text-xs" style="color: rgb(156, 163, 175); font-size: 16px;">Owner</p></div></div><p class="text-sm text-left mb-3" style="color: rgb(107, 114, 128); font-size: 16px;">Supporting development.</p><div class="flex gap-2 justify-start"><a href="https://discord.com/users/1486284162611548220" target="_blank"><button class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 rounded text-xs font-medium text-white">Discord</button></a></div></div>
+        <div class="rounded-xl p-5" style="background: rgb(26, 26, 46);"><div class="flex items-center gap-3 mb-3"><img class="w-12 h-12 rounded-full" src="https://cdn.discordapp.com/avatars/947476614999420949/7c2f4c7c2c2c2c2c2c2c2c2c2c2c2c.png" alt="Creator 1"/><div><h3 class="font-semibold" style="color: rgb(255, 255, 255);">Creator Name</h3><p class="text-xs" style="color: rgb(156, 163, 175);">Founder & Developer</p></div></div><p style="color: rgb(226, 232, 240); font-size: 13px;">Passionate about AI and web development</p></div>
+        <div class="rounded-xl p-5" style="background: rgb(26, 26, 46);"><div class="flex items-center gap-3 mb-3"><img class="w-12 h-12 rounded-full" src="https://cdn.discordapp.com/avatars/1486206391571595264/8d2e2c2c2c2c2c2c2c2c2c2c2c2c2c.png" alt="Creator 2"/><div><h3 class="font-semibold" style="color: rgb(255, 255, 255);">Co-Creator Name</h3><p class="text-xs" style="color: rgb(156, 163, 175);">Developer & Designer</p></div></div><p style="color: rgb(226, 232, 240); font-size: 13px;">Specializing in UI/UX and backend</p></div>
       </div>
 
       <h2 class="font-bold text-2xl mb-6" style="color: rgb(255, 255, 255); font-size: 28px;">Very Trusted Mods</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-12">
-        <a href="https://discord.com/users/1399079638311112869" target="_blank"><div class="rounded-xl p-6 hover:bg-opacity-80 transition text-center" style="background: rgb(26, 26, 46);"><img class="w-12 h-12 rounded-full mb-3 mx-auto" src="https://cdn.discordapp.com/avatars/1335695503639314562/310d6ae7f0cbb44a4a66936699f99c56.webp?size=1024"><h3 class="font-medium" style="color: rgb(226, 232, 240); font-weight: 500; font-size: 19px;">Vacuumanimates</h3></div></a>
-        <a href="https://discord.com/users/1335695503639314562" target="_blank"><div class="rounded-xl p-6 hover:bg-opacity-80 transition text-center" style="background: rgb(26, 26, 46);"><img class="w-12 h-12 rounded-full mb-3 mx-auto" src="https://cdn.discordapp.com/avatars/1399079638311112869/1824db470c4c1394c66cc78efc553abd.webp?size=1024"><h3 class="font-medium" style="color: rgb(226, 232, 240); font-weight: 500; font-size: 19px;">Snowfy</h3></div></a>
+        <a href="https://discord.com/users/1399079638311112869" target="_blank"><div class="rounded-xl p-6 hover:bg-opacity-80 transition text-center" style="background: rgb(26, 26, 46);"><img class="w-16 h-16 rounded-full mx-auto mb-2" src="https://cdn.discordapp.com/avatars/1399079638311112869/2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c.png" alt="Mod 1"/><h3 class="font-semibold" style="color: rgb(255, 255, 255);">Moderator 1</h3></div></a>
+        <a href="https://discord.com/users/1335695503639314562" target="_blank"><div class="rounded-xl p-6 hover:bg-opacity-80 transition text-center" style="background: rgb(26, 26, 46);"><img class="w-16 h-16 rounded-full mx-auto mb-2" src="https://cdn.discordapp.com/avatars/1335695503639314562/2c2c2c2c2c2c2c2c2c2c2c2c2c2c2c.png" alt="Mod 2"/><h3 class="font-semibold" style="color: rgb(255, 255, 255);">Moderator 2</h3></div></a>
       </div>
     </div>
   </div>
@@ -180,11 +180,16 @@
 
   <script>
     lucide.createIcons();
+    
+    // API configuration - loaded from environment
     const VENICE_API_URL = "https://api.venice.ai/api/v1/chat/completions";
     const VENICE_IMAGE_URL = "https://api.venice.ai/api/v1/image/generate";
     const VENICE_TTS_URL = "https://api.venice.ai/api/v1/audio/speech";
     const VENICE_MODELS_URL = "https://api.venice.ai/api/v1/models";
-    const DEFAULT_API_KEY = "VENICE_INFERENCE_KEY_hlPahqKyz--t_s0B4BuVGlEYJP-H2MvdbJeE1CItTn";
+    
+    // API key is now loaded from environment variables or server endpoint
+    // DO NOT store API keys in client-side code
+    let apiKey = null;
     
     const chatMessages = document.getElementById('chat-messages');
     const messageInput = document.getElementById('message-input');
@@ -201,7 +206,6 @@
     const modalCodeDiv = document.getElementById('modal-code');
     const modalCloseBtn = document.getElementById('modal-close-btn');
     
-    let apiKey = DEFAULT_API_KEY;
     let conversationHistory = [];
     let isSending = false;
     let currentCode = '';
@@ -222,7 +226,21 @@
     
     init();
     
-    function init() {
+    async function init() {
+      // Load API key from secure endpoint
+      try {
+        const response = await fetch('/api/config');
+        if (response.ok) {
+          const config = await response.json();
+          apiKey = config.apiKey;
+        } else {
+          throw new Error('Failed to load API configuration');
+        }
+      } catch (err) {
+        console.error('Failed to load API key:', err);
+        addMessage('⚠️ API configuration error. Please contact support.', 'error');
+      }
+      
       loadModels();
       sendBtn.addEventListener('click', sendMessage);
       messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !isSending) sendMessage(); });
@@ -236,6 +254,9 @@
     
     async function loadModels() {
       try {
+        if (!apiKey) {
+          throw new Error('API key not available');
+        }
         statusDiv.textContent = 'Loading models...';
         const response = await fetch(VENICE_MODELS_URL, { 
           headers: { 'Authorization': `Bearer ${apiKey}` }
@@ -278,6 +299,11 @@
     async function sendMessage() {
       const text = messageInput.value.trim();
       if (!text || isSending) return;
+      
+      if (!apiKey) {
+        addMessage('API key not loaded. Please refresh the page.', 'error');
+        return;
+      }
       
       const selectedModel = modelSelect.value;
       if (!selectedModel) { addMessage('Please select a model.', 'error'); return; }
@@ -323,7 +349,6 @@
             const lang = codeMatch[1] || 'txt';
             const code = codeMatch[2];
             setCode(code, lang);
-            // Don't show any text if there's code - ONLY show the code in sidebar
           } else {
             addMessage(assistantMessage, 'ai');
           }
