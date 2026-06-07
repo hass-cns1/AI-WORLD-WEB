@@ -69,6 +69,18 @@
         </a>
       </div>
 
+      <div class="mb-6 p-4 rounded-lg" style="background: rgb(26, 26, 46); border: 1px solid rgb(88, 101, 242, 0.3);">
+        <p class="text-sm mb-3" style="color: rgb(226, 232, 240);">
+          <span style="color: rgb(88, 101, 242); font-weight: 600;">✨ This is a preview of the server</span> – Join to get full access to:
+        </p>
+        <ul class="text-sm grid grid-cols-1 sm:grid-cols-2 gap-2" style="color: rgb(156, 163, 175); margin-left: 8px;">
+          <li>📄 <span style="color: rgb(226, 232, 240);">Text page</span> - Ask questions & chat</li>
+          <li>🖼️ <span style="color: rgb(226, 232, 240);">Image generation</span> - Create visuals</li>
+          <li>💻 <span style="color: rgb(226, 232, 240);">Coding</span> - Generate & debug code</li>
+          <li>🎨 <span style="color: rgb(226, 232, 240);">More models</span> - Multiple AI options</li>
+        </ul>
+      </div>
+
       <div>
         <h2 class="text-2xl font-bold mb-3" style="color: rgb(255, 255, 255);">Chat with AI</h2>
 
@@ -248,7 +260,7 @@
         
         if (llamaModels.length > 0) {
           modelSelect.innerHTML = llamaModels.map(m => 
-            `<option value="${m.id}">${m.name || m.id}</option>`
+            `<option value="${m.id}" ${m.id === 'llama-3.2-3b' ? 'selected' : ''}>${m.name || m.id}</option>`
           ).join('');
         } else {
           throw new Error('No Llama models found');
@@ -258,7 +270,7 @@
         console.error('Model load error:', err);
         statusDiv.textContent = 'Using fallback models';
         modelSelect.innerHTML = FALLBACK_MODELS.map(m => 
-          `<option value="${m.id}">${m.name}</option>`
+          `<option value="${m.id}" ${m.id === 'llama-3.2-3b' ? 'selected' : ''}>${m.name}</option>`
         ).join('');
       }
     }
