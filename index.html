@@ -1,0 +1,976 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Unlocked AI - Web Chat</title>
+
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+
+  <style>
+
+    body { font-family: 'DM Sans', sans-serif; background: rgb(14, 14, 16); color: rgb(226, 232, 240); min-height: 100vh; }
+
+    .glow { box-shadow: 0 0 40px rgba(88, 101, 242, 0.3); }
+
+    .main-layout { display: grid; grid-template-columns: 1fr 300px; gap: 16px; margin-top: 24px; }
+
+    @media (max-width: 1024px) { .main-layout { grid-template-columns: 1fr; } .code-sidebar { display: none; } }
+
+    .chat-container { background: rgb(20, 20, 35); border: 1px solid rgb(50, 50, 80); border-radius: 12px; display: flex; flex-direction: column; height: 500px; }
+
+    .chat-header { background: linear-gradient(135deg, rgb(88, 101, 242) 0%, rgb(59, 130, 246) 100%); padding: 16px; border-radius: 12px 12px 0 0; border-bottom: 2px solid rgba(88, 101, 242, 0.5); }
+
+    .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+
+    .message { padding: 12px 16px; border-radius: 8px; max-width: 100%; word-wrap: break-word; animation: slideIn 0.3s ease; }
+
+    @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .user-msg { background: rgb(88, 101, 242); align-self: flex-end; color: white; max-width: 85%; }
+
+    .ai-msg { background: rgb(30, 30, 50); border: 1px solid rgb(88, 101, 242, 0.3); align-self: flex-start; max-width: 85%; }
+
+    .typing { display: flex; gap: 4px; padding: 12px 16px; }
+
+    .typing-dot { width: 8px; height: 8px; background: rgb(88, 101, 242); border-radius: 50%; animation: typing 1.4s infinite; }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; } .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typing { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-10px); } }
+
+    .chat-input-area { padding: 16px; border-top: 1px solid rgb(50, 50, 80); display: flex; gap: 8px; }
+
+    .chat-input-area input { flex: 1; background: rgb(30, 30, 50); border: 1px solid rgb(88, 101, 242, 0.3); color: white; padding: 10px 12px; border-radius: 8px; font-size: 14px; }
+
+    .chat-input-area input::placeholder { color: rgb(107, 114, 128); }
+
+    .chat-input-area input:focus { outline: none; border-color: rgb(88, 101, 242); box-shadow: 0 0 20px rgba(88, 101, 242, 0.2); }
+
+    .btn-send { background: rgb(88, 101, 242); color: white; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+
+    .btn-send:hover { background: rgb(99, 111, 252); transform: translateY(-2px); }
+
+    .btn-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .model-select { background: rgb(30, 30, 50); border: 1px solid rgb(88, 101, 242, 0.3); color: white; padding: 8px 12px; border-radius: 8px; font-size: 13px; }
+
+    .model-select:focus { outline: none; border-color: rgb(88, 101, 242); }
+
+    .error-msg { background: rgb(127, 29, 29); color: rgb(254, 202, 202); padding: 12px 16px; border-radius: 8px; border: 1px solid rgb(239, 68, 68, 0.3); }
+
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+
+    .code-sidebar { background: rgb(20, 20, 35); border: 1px solid rgb(50, 50, 80); border-radius: 12px; padding: 10px; display: flex; flex-direction: column; height: 500px; max-height: 500px; }
+
+    .code-sidebar h3 { color: rgb(255, 255, 255); font-weight: 600; margin-bottom: 6px; font-size: 12px; }
+
+    .code-display { flex: 1; background: rgb(14, 14, 16); border: 1px solid rgb(50, 50, 80); border-radius: 6px; padding: 8px; overflow-y: auto; margin-bottom: 6px; font-family: 'Courier New', monospace; font-size: 11px; color: rgb(167, 243, 208); white-space: pre-wrap; word-break: break-word; line-height: 1.4; }
+
+    .output-image { max-width: 100%; height: auto; border-radius: 4px; }
+
+    .audio-player { width: 100%; max-height: 32px; }
+
+    .code-buttons { display: flex; gap: 4px; flex-direction: row; }
+
+    .btn-code { flex: 1; background: rgb(88, 101, 242); color: white; border: none; padding: 5px 6px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 3px; }
+
+    .btn-code:hover { background: rgb(99, 111, 252); }
+
+    .btn-code:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-code svg { width: 10px; height: 10px; }
+
+    .code-empty { color: rgb(107, 114, 128); text-align: center; padding: 12px 6px; font-style: italic; font-size: 10px; }
+
+
+
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; align-items: center; justify-content: center; }
+
+    .modal.show { display: flex; }
+
+    .modal-content { background: rgb(20, 20, 35); border: 1px solid rgb(50, 50, 80); border-radius: 12px; padding: 20px; max-width: 90%; max-height: 85vh; overflow: auto; position: relative; }
+
+    .modal-close { position: absolute; top: 12px; right: 12px; background: rgb(88, 101, 242); color: white; border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+
+    .modal-close:hover { background: rgb(99, 111, 252); }
+
+    .modal-code { font-family: 'Courier New', monospace; font-size: 14px; color: rgb(167, 243, 208); white-space: pre-wrap; word-break: break-all; background: rgb(14, 14, 16); padding: 16px; border-radius: 8px; border: 1px solid rgb(50, 50, 80); }
+
+  </style>
+
+</head>
+
+<body class="p-6">
+
+  <div class="max-w-6xl w-full mx-auto">
+
+    <div class="text-center">
+
+      <div class="flex flex-col items-center gap-4 mb-6">
+
+        <img class="w-28 h-28 rounded-full glow" loading="lazy" src="https://cdn.discordapp.com/avatars/1506892951450685541/a_8a6ca7c147a205c3abc492209f962ffb.gif?size=1024&animated=true" alt="AI World bot avatar">
+
+        <h1 class="font-bold" style="color: rgb(255, 255, 255); font-weight: 700; font-size: 40px;">AI World</h1>
+
+        <p class="max-w-md" style="color: rgb(156, 163, 175); font-weight: 400; font-size: 16px;">This is an AI-powered server built for creators and coders. You can generate code, make images, test ideas, or just chill and chat. It's a place for people who like experimenting with tech and pushing boundaries.</p>
+
+      </div>
+
+
+
+      <div class="flex gap-4 justify-center mb-8 flex-wrap">
+
+        <a href="https://discord.gg/Bf99m22Fy5" target="_blank">
+
+          <button class="px-8 py-3 rounded-lg font-medium text-lg" style="background: rgb(88, 101, 242); color: rgb(255, 255, 255); font-weight: 600;">Join Discord Server</button>
+
+        </a>
+
+      </div>
+
+
+
+      <div>
+
+        <h2 class="text-2xl font-bold mb-3" style="color: rgb(255, 255, 255);">Chat with AI</h2>
+
+
+
+        <div class="mb-4 flex gap-3 flex-wrap items-center justify-center">
+
+          <label class="flex items-center gap-2 text-gray-300 text-sm">
+
+            Model:
+
+            <select id="model-select" class="model-select">
+
+              <option value="">Loading models...</option>
+
+            </select>
+
+          </label>
+
+          <button id="clear-chat" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded text-sm">
+
+            Clear Chat
+
+          </button>
+
+        </div>
+
+
+
+        <div class="main-layout">
+
+          <div class="chat-container scrollbar-hide">
+
+            <div class="chat-header">
+
+              <div class="flex items-center justify-between">
+
+                <h2 class="font-bold text-lg">Conversation</h2>
+
+                <div id="status" class="text-sm text-indigo-100">Ready</div>
+
+              </div>
+
+            </div>
+
+
+
+            <div id="chat-messages" class="chat-messages scrollbar-hide">
+
+              <div class="ai-msg">
+
+                <p class="text-sm">👋 Hello! Ask me anything - code, images, text-to-speech, or just chat!</p>
+
+              </div>
+
+            </div>
+
+
+
+            <div id="typing-indicator" class="typing" style="display: none;">
+
+              <div class="typing-dot"></div>
+
+              <div class="typing-dot"></div>
+
+              <div class="typing-dot"></div>
+
+            </div>
+
+
+
+            <div class="chat-input-area">
+
+              <input id="message-input" type="text" placeholder="Try: 'generate a python script' or 'create an image of...'" autocomplete="off"/>
+
+              <button id="send-btn" class="btn-send">Send</button>
+
+            </div>
+
+          </div>
+
+
+
+          <div class="code-sidebar">
+
+            <h3>📝 Output</h3>
+
+            <div id="code-display" class="code-display">
+
+              <div class="code-empty">Output will appear here</div>
+
+            </div>
+
+            <div class="code-buttons">
+
+              <button id="view-code-btn" class="btn-code" style="display: none;">
+
+                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/></svg>
+
+                View
+
+              </button>
+
+              <button id="copy-code-btn" class="btn-code" style="display: none;">
+
+                <svg fill="currentColor" viewBox="0 0 20 20"><path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"/><path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 1 1 0 100 2h.5a.5.5 0 01.5.5v11a.5.5 0 01-.5.5H6.5a.5.5 0 01-.5-.5V5a.5.5 0 01.5-.5H7a1 1 0 100-2z"/></svg>
+
+                Copy
+
+              </button>
+
+              <button id="download-code-btn" class="btn-code" style="display: none;">
+
+                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1m3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+
+                Download
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8 mt-8">
+
+        <div class="rounded-xl p-5 text-left" style="background: rgb(26, 26, 46);"><div class="mb-2"><i data-lucide="message-square" class="w-5 h-5 text-indigo-400"></i></div><h3 class="font-medium mb-1" style="color: rgb(226, 232, 240); font-weight: 500; font-size: 19px;">Web Chat</h3><p class="text-sm" style="color: rgb(107, 114, 128); font-weight: 400; font-size: 16px;">Chat instantly.</p></div>
+
+        <div class="rounded-xl p-5 text-left" style="background: rgb(26, 26, 46);"><div class="mb-2"><i data-lucide="code" class="w-5 h-5 text-indigo-400"></i></div><h3 class="font-medium mb-1" style="color: rgb(226, 232, 240); font-weight: 500; font-size: 19px;">Code Gen</h3><p class="text-sm" style="color: rgb(107, 114, 128); font-weight: 400; font-size: 16px;">Generate code.</p></div>
+
+        <div class="rounded-xl p-5 text-left" style="background: rgb(26, 26, 46);"><div class="mb-2"><i data-lucide="image" class="w-5 h-5 text-indigo-400"></i></div><h3 class="font-medium mb-1" style="color: rgb(226, 232, 240); font-weight: 500; font-size: 19px;">Images</h3><p class="text-sm" style="color: rgb(107, 114, 128); font-weight: 400; font-size: 16px;">Create visuals.</p></div>
+
+        <div class="rounded-xl p-5 text-left" style="background: rgb(26, 26, 46);"><div class="mb-2"><i data-lucide="volume-2" class="w-5 h-5 text-indigo-400"></i></div><h3 class="font-medium mb-1" style="color: rgb(226, 232, 240); font-weight: 500; font-size: 19px;">Voice</h3><p class="text-sm" style="color: rgb(107, 114, 128); font-weight: 400; font-size: 16px;">Text to speech.</p></div>
+
+        <div class="rounded-xl p-5 text-left" style="background: rgb(26, 26, 46);"><div class="mb-2"><i data-lucide="zap" class="w-5 h-5 text-indigo-400"></i></div><h3 class="font-medium mb-1" style="color: rgb(226, 232, 240); font-weight: 500; font-size: 19px;">Discord</h3><p class="text-sm" style="color: rgb(107, 114, 128); font-weight: 400; font-size: 16px;">And more.</p></div>
+
+      </div>
+
+
+
+      <hr class="border-gray-700 my-4" style="background: transparent;">
+
+
+
+      <h2 class="font-bold text-2xl mb-4" style="color: rgb(255, 255, 255); font-size: 28px;">Creators</h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+
+        <div class="rounded-xl p-5" style="background: rgb(26, 26, 46);"><div class="flex items-center gap-3 mb-3"><img class="w-12 h-12 rounded-full" src="https://cdn.discordapp.com/avatars/947423539626127373/4a2074d33791f77d71e98faea5f532f3.webp?size=1024" alt="Creator"><div class="flex-1 text-left"><h3 class="font-medium" style="color: rgb(255, 255, 255); font-weight: 600; font-size: 19px;">unknwnsvc</h3><p class="text-xs" style="color: rgb(156, 163, 175); font-size: 16px;">Owner</p></div></div><p class="text-sm text-left mb-3" style="color: rgb(107, 114, 128); font-size: 16px;">Building AI World for creators and coders.</p><div class="flex gap-2 justify-start"><a href="https://discord.com/users/1399079638311112869" target="_blank"><button class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 rounded text-xs font-medium text-white">Discord</button></a></div></div>
+
+        <div class="rounded-xl p-5" style="background: rgb(26, 26, 46);"><div class="flex items-center gap-3 mb-3"><img class="w-12 h-12 rounded-full" src="https://cdn.discordapp.com/avatars/1486284162611548220/ec51e31d9b7654d256a1d4af82f1a081.webp?size=1024" alt="Co-owner"><div class="flex-1 text-left"><h3 class="font-medium" style="color: rgb(255, 255, 255); font-weight: 600; font-size: 19px;">Co-Owner</h3><p class="text-xs" style="color: rgb(156, 163, 175); font-size: 16px;">Owner</p></div></div><p class="text-sm text-left mb-3" style="color: rgb(107, 114, 128); font-size: 16px;">Supporting development.</p><div class="flex gap-2 justify-start"><a href="https://discord.com/users/1486284162611548220" target="_blank"><button class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 rounded text-xs font-medium text-white">Discord</button></a></div></div>
+
+      </div>
+
+
+
+      <h2 class="font-bold text-2xl mb-6" style="color: rgb(255, 255, 255); font-size: 28px;">Very Trusted Mods</h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-12">
+
+        <a href="https://discord.com/users/1399079638311112869" target="_blank"><div class="rounded-xl p-6 hover:bg-opacity-80 transition text-center" style="background: rgb(26, 26, 46);"><img class="w-12 h-12 rounded-full mb-3 mx-auto" src="https://cdn.discordapp.com/avatars/1335695503639314562/310d6ae7f0cbb44a4a66936699f99c56.webp?size=1024"><h3 class="font-medium" style="color: rgb(226, 232, 240); font-weight: 500; font-size: 19px;">Vacuumanimates</h3></div></a>
+
+        <a href="https://discord.com/users/1335695503639314562" target="_blank"><div class="rounded-xl p-6 hover:bg-opacity-80 transition text-center" style="background: rgb(26, 26, 46);"><img class="w-12 h-12 rounded-full mb-3 mx-auto" src="https://cdn.discordapp.com/avatars/1399079638311112869/1824db470c4c1394c66cc78efc553abd.webp?size=1024"><h3 class="font-medium" style="color: rgb(226, 232, 240); font-weight: 500; font-size: 19px;">Snowfy</h3></div></a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- CODE VIEWER MODAL -->
+
+  <div id="code-modal" class="modal">
+
+    <div class="modal-content">
+
+      <button id="modal-close-btn" class="modal-close">✕</button>
+
+      <div id="modal-code" class="modal-code"></div>
+
+    </div>
+
+  </div>
+
+
+
+  <script>
+
+    lucide.createIcons();
+
+    // Configure API URL based on environment
+    let API_BASE_URL = window.location.origin;
+
+    // If running on GitHub Pages or different domain, change this to your backend URL
+    if (window.location.hostname === 'github.io' || window.location.hostname.includes('github')) {
+      API_BASE_URL = 'https://your-backend-url.com'; // Change this to your deployed backend
+    }
+
+    console.log('API Base URL:', API_BASE_URL);
+
+
+
+    const chatMessages = document.getElementById('chat-messages');
+
+    const messageInput = document.getElementById('message-input');
+
+    const sendBtn = document.getElementById('send-btn');
+
+    const modelSelect = document.getElementById('model-select');
+
+    const typingIndicator = document.getElementById('typing-indicator');
+
+    const clearChatBtn = document.getElementById('clear-chat');
+
+    const statusDiv = document.getElementById('status');
+
+    const codeDisplay = document.getElementById('code-display');
+
+    const copyCodeBtn = document.getElementById('copy-code-btn');
+
+    const downloadCodeBtn = document.getElementById('download-code-btn');
+
+    const viewCodeBtn = document.getElementById('view-code-btn');
+
+    const codeModal = document.getElementById('code-modal');
+
+    const modalCodeDiv = document.getElementById('modal-code');
+
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+
+
+
+    let conversationHistory = [];
+
+    let isSending = false;
+
+    let currentCode = '';
+
+    let currentCodeLang = 'txt';
+
+
+
+    const FALLBACK_MODELS = [
+
+      { id: 'llama-3.3-70b', name: 'Llama 3.3 70B' },
+
+      { id: 'llama-3.1-70b', name: 'Llama 3.1 70B' },
+
+      { id: 'llama-3-70b', name: 'Llama 3 70B' },
+
+      { id: 'llama-3-8b', name: 'Llama 3 8B' },
+
+      { id: 'llama-2-70b', name: 'Llama 2 70B' },
+
+      { id: 'llama-2-13b', name: 'Llama 2 13B' },
+
+      { id: 'neural-chat-7b', name: 'Neural Chat 7B' },
+
+      { id: 'dolphin-2.1-70b', name: 'Dolphin 2.1 70B' },
+
+      { id: 'mistral-7b', name: 'Mistral 7B' },
+
+      { id: 'mistral-mixtral-8x7b', name: 'Mixtral 8x7B' }
+
+    ];
+
+
+
+    init();
+
+
+
+    function init() {
+
+      checkBackendHealth();
+
+      sendBtn.addEventListener('click', sendMessage);
+
+      messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !isSending) sendMessage(); });
+
+      clearChatBtn.addEventListener('click', clearChat);
+
+      viewCodeBtn.addEventListener('click', viewCode);
+
+      copyCodeBtn.addEventListener('click', copyCode);
+
+      downloadCodeBtn.addEventListener('click', downloadCode);
+
+      modalCloseBtn.addEventListener('click', closeModal);
+
+      codeModal.addEventListener('click', (e) => { if (e.target === codeModal) closeModal(); });
+
+    }
+
+
+
+    async function checkBackendHealth() {
+
+      try {
+
+        const response = await fetch(`${API_BASE_URL}/api/health`);
+
+        if (response.ok) {
+
+          console.log('✓ Backend is connected');
+
+          loadModels();
+
+        } else {
+
+          throw new Error('Backend returned error');
+
+        }
+
+      } catch (err) {
+
+        console.error('✗ Cannot connect to backend:', err);
+
+        addMessage('⚠️ Error: Cannot connect to backend. Make sure server.js is running on ' + API_BASE_URL, 'error');
+
+        statusDiv.textContent = 'Backend Error';
+
+      }
+
+    }
+
+
+
+    async function loadModels() {
+
+      try {
+
+        statusDiv.textContent = 'Loading models...';
+
+        const response = await fetch(`${API_BASE_URL}/api/models`);
+
+
+
+        if (!response.ok) throw new Error('API error');
+
+        const data = await response.json();
+
+        let models = [];
+
+        if (data.data && Array.isArray(data.data)) {
+
+          models = data.data;
+
+        } else if (data.models && Array.isArray(data.models)) {
+
+          models = data.models;
+
+        } else if (Array.isArray(data)) {
+
+          models = data;
+
+        }
+
+
+
+        if (models.length === 0) throw new Error('No models found');
+
+
+
+        const llamaModels = models.filter(m =>
+
+          m.id?.toLowerCase().includes('llama') || m.name?.toLowerCase().includes('llama')
+
+        );
+
+
+
+        if (llamaModels.length > 0) {
+
+          modelSelect.innerHTML = llamaModels.map(m =>
+
+            `<option value="${m.id}">${m.name || m.id}</option>`
+
+          ).join('');
+
+        } else {
+
+          throw new Error('No Llama models found');
+
+        }
+
+        statusDiv.textContent = 'Ready';
+
+      } catch (err) {
+
+        console.error('Model load error:', err);
+
+        statusDiv.textContent = 'Using fallback models';
+
+        modelSelect.innerHTML = FALLBACK_MODELS.map(m =>
+
+          `<option value="${m.id}">${m.name}</option>`
+
+        ).join('');
+
+      }
+
+    }
+
+
+
+    async function sendMessage() {
+
+      const text = messageInput.value.trim();
+
+      if (!text || isSending) return;
+
+
+
+      const selectedModel = modelSelect.value;
+
+      if (!selectedModel) { addMessage('Please select a model.', 'error'); return; }
+
+
+
+      isSending = true;
+
+      sendBtn.disabled = true;
+
+      messageInput.disabled = true;
+
+      statusDiv.textContent = 'Sending...';
+
+
+
+      addMessage(text, 'user');
+
+      messageInput.value = '';
+
+      typingIndicator.style.display = 'flex';
+
+
+
+      try {
+
+        if (text.toLowerCase().includes('image') || text.toLowerCase().includes('picture') || text.toLowerCase().includes('create image')) {
+
+          await generateImage(text);
+
+        } else if (text.toLowerCase().includes('speak') || text.toLowerCase().includes('voice') || text.toLowerCase().includes('text to speech')) {
+
+          await generateTTS(text);
+
+        } else {
+
+          conversationHistory.push({ role: 'user', content: text });
+
+
+
+          const response = await fetch(`${API_BASE_URL}/api/chat`, {
+
+            method: 'POST',
+
+            headers: { 'Content-Type': 'application/json' },
+
+            body: JSON.stringify({
+
+              model: selectedModel,
+
+              messages: conversationHistory,
+
+              max_tokens: 2000,
+
+              temperature: 0.7,
+
+              venice_parameters: { include_venice_system_prompt: false }
+
+            })
+
+          });
+
+
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`API Error: ${response.status} - ${errorText}`);
+          }
+
+          const data = await response.json();
+
+          const assistantMessage = data.choices[0].message.content;
+
+
+
+          const codeMatch = assistantMessage.match(/```([\w]*)\n([\s\S]*?)\n```/);
+
+          if (codeMatch) {
+
+            const lang = codeMatch[1] || 'txt';
+
+            const code = codeMatch[2];
+
+            setCode(code, lang);
+
+          } else {
+
+            addMessage(assistantMessage, 'ai');
+
+          }
+
+
+
+          conversationHistory.push({ role: 'assistant', content: assistantMessage });
+
+        }
+
+
+
+        statusDiv.textContent = 'Ready';
+
+      } catch (err) {
+
+        console.error('Error:', err);
+
+        addMessage(`Error: ${err.message}`, 'error');
+
+        statusDiv.textContent = 'Error';
+
+      } finally {
+
+        isSending = false;
+
+        typingIndicator.style.display = 'none';
+
+        sendBtn.disabled = false;
+
+        messageInput.disabled = false;
+
+        messageInput.focus();
+
+      }
+
+    }
+
+
+
+    async function generateImage(prompt) {
+
+      try {
+
+        addMessage('🖼️ Generating image...', 'ai');
+
+        const cleanPrompt = prompt.replace(/image|generate|picture|create/gi, '').trim();
+
+
+
+        const response = await fetch(`${API_BASE_URL}/api/image`, {
+
+          method: 'POST',
+
+          headers: { 'Content-Type': 'application/json' },
+
+          body: JSON.stringify({
+
+            prompt: cleanPrompt || 'A beautiful landscape',
+
+            width: 768,
+
+            height: 768,
+
+            safe_mode: false
+
+          })
+
+        });
+
+
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Image Error: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+
+        if (data.images && data.images[0]) {
+
+          const img = document.createElement('img');
+
+          img.src = data.images[0];
+
+          img.className = 'output-image';
+
+          codeDisplay.innerHTML = '';
+
+          codeDisplay.appendChild(img);
+
+          copyCodeBtn.style.display = 'none';
+
+          downloadCodeBtn.style.display = 'none';
+
+          addMessage('✓ Image generated! Check the Output panel →', 'ai');
+
+        }
+
+      } catch (err) {
+
+        addMessage(`Image error: ${err.message}`, 'error');
+
+      }
+
+    }
+
+
+
+    async function generateTTS(text) {
+
+      try {
+
+        addMessage('🎤 Generating voice...', 'ai');
+
+        const cleanText = text.replace(/speak|voice|text to speech/gi, '').trim();
+
+
+
+        const response = await fetch(`${API_BASE_URL}/api/tts`, {
+
+          method: 'POST',
+
+          headers: { 'Content-Type': 'application/json' },
+
+          body: JSON.stringify({
+
+            text: cleanText || 'Hello world',
+
+            model: 'venice-tts'
+
+          })
+
+        });
+
+
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`TTS Error: ${response.status} - ${errorText}`);
+        }
+
+        const data = await response.json();
+
+        if (data.audio) {
+
+          const audio = document.createElement('audio');
+
+          audio.src = `data:audio/mp3;base64,${data.audio}`;
+
+          audio.controls = true;
+
+          audio.className = 'audio-player';
+
+          codeDisplay.innerHTML = '';
+
+          codeDisplay.appendChild(audio);
+
+          copyCodeBtn.style.display = 'none';
+
+          downloadCodeBtn.style.display = 'none';
+
+          addMessage('✓ Voice generated! Check the Output panel →', 'ai');
+
+        }
+
+      } catch (err) {
+
+        addMessage(`Voice error: ${err.message}`, 'error');
+
+      }
+
+    }
+
+
+
+    function addMessage(text, type = 'ai') {
+
+      const msgDiv = document.createElement('div');
+
+      msgDiv.className = `message ${type === 'user' ? 'user-msg' : type === 'error' ? 'error-msg' : 'ai-msg'}`;
+
+      msgDiv.textContent = text;
+
+      chatMessages.appendChild(msgDiv);
+
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    }
+
+
+
+    function setCode(code, lang = 'txt') {
+
+      currentCode = code;
+
+      currentCodeLang = lang;
+
+      const preEl = document.createElement('pre');
+
+      preEl.style.margin = '0';
+
+      preEl.style.fontSize = '11px';
+
+      preEl.textContent = code;
+
+      codeDisplay.innerHTML = '';
+
+      codeDisplay.appendChild(preEl);
+
+      viewCodeBtn.style.display = 'flex';
+
+      copyCodeBtn.style.display = 'flex';
+
+      downloadCodeBtn.style.display = 'flex';
+
+    }
+
+
+
+    function copyCode() {
+
+      navigator.clipboard.writeText(currentCode).then(() => {
+
+        const original = copyCodeBtn.textContent;
+
+        copyCodeBtn.textContent = '✓ Copied!';
+
+        setTimeout(() => { copyCodeBtn.textContent = original; }, 2000);
+
+      });
+
+    }
+
+
+
+    function downloadCode() {
+
+      const langExtensions = {
+
+        'py': 'py', 'python': 'py',
+
+        'js': 'js', 'javascript': 'js', 'ts': 'ts', 'typescript': 'ts',
+
+        'html': 'html', 'css': 'css', 'scss': 'scss',
+
+        'java': 'java', 'cpp': 'cpp', 'c': 'c', 'h': 'h',
+
+        'go': 'go', 'rust': 'rs', 'php': 'php', 'rb': 'rb',
+
+        'sql': 'sql', 'json': 'json', 'xml': 'xml',
+
+        'sh': 'sh', 'bash': 'sh'
+
+      };
+
+
+
+      const ext = langExtensions[currentCodeLang.toLowerCase()] || 'txt';
+
+      const element = document.createElement('a');
+
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(currentCode));
+
+      element.setAttribute('download', `code.${ext}`);
+
+      element.style.display = 'none';
+
+      document.body.appendChild(element);
+
+      element.click();
+
+      document.body.removeChild(element);
+
+    }
+
+
+
+    function clearChat() {
+
+      if (conversationHistory.length > 0 && confirm('Clear conversation history?')) {
+
+        chatMessages.innerHTML = `<div class="ai-msg"><p class="text-sm">👋 Conversation cleared!</p></div>`;
+
+        conversationHistory = [];
+
+        codeDisplay.innerHTML = '<div class="code-empty">Output will appear here</div>';
+
+        currentCode = '';
+
+        currentCodeLang = 'txt';
+
+        viewCodeBtn.style.display = 'none';
+
+        copyCodeBtn.style.display = 'none';
+
+        downloadCodeBtn.style.display = 'none';
+
+      }
+
+    }
+
+
+
+    function viewCode() {
+
+      modalCodeDiv.textContent = currentCode;
+
+      codeModal.classList.add('show');
+
+    }
+
+
+
+    function closeModal() {
+
+      codeModal.classList.remove('show');
+
+    }
+
+  </script>
+
+</body>
+
+</html>
