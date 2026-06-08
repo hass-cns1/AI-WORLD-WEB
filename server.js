@@ -15,7 +15,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.static(path.join(__dirname))); // Serve static files (index.html, etc.)
 
-const VENICE_API_KEY = process.env.VENICE_API_KEY;
+const VENICE_API_KEY = process.env.VENICE_INFERENCE_KEY_hlPahqKyz--t_s0B4BuVGlEYJP-H2MvdbJeE1CItTn;
 const VENICE_API_URL = 'https://api.venice.ai/api/v1/chat/completions';
 const VENICE_IMAGE_URL = 'https://api.venice.ai/api/v1/image/generate';
 const VENICE_TTS_URL = 'https://api.venice.ai/api/v1/audio/speech';
